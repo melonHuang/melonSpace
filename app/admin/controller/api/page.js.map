@@ -1,0 +1,43 @@
+{
+    "version": 3,
+    "sources": [
+        "../../../../src/admin/controller/api/page.js"
+    ],
+    "names": [
+        "modelInstance",
+        "setRelation",
+        "where",
+        "type",
+        "getAction",
+        "self",
+        "id",
+        "field",
+        "order",
+        "get",
+        "page",
+        "getBaseAction",
+        "postAction",
+        "data",
+        "post",
+        "pathname",
+        "select",
+        "length",
+        "fail",
+        "user_id",
+        "userInfo",
+        "getContentAndSummary",
+        "getPostTime",
+        "addPost",
+        "insertId",
+        "success",
+        "putAction",
+        "savePost",
+        "rows",
+        "affectedRows"
+    ],
+    "mappings": "AAAA;;;;;;;;;;;;;;;;;;;;;;;;AAEA;;;;;;;;;;;;;;;;;;gJAGEA,a,GAAgB,MAAKA,aAAL,CAAmBC,WAAnB,CAA+B,MAA/B,EAAuCC,KAAvC,CAA6C,EAACC,MAAM,CAAP,EAA7C,C;;;mBAEhBC,S,sBAAUC,I,EAAK;AACb,QAAI,CAAC,KAAKC,EAAV,EAAe;AACb,UAAIC,QAAQ,CAAC,IAAD,EAAO,OAAP,EAAgB,SAAhB,EAA2B,aAA3B,EAA0C,aAA1C,EAAyD,QAAzD,EAAmE,UAAnE,EAA+E,WAA/E,CAAZ;AACA,WAAKP,aAAL,CAAmBQ,KAAnB,CAAyB,kBAAzB,EAA6CD,KAA7C,CAAmDA,KAAnD;AACD;;AAED,QAAI,KAAKE,GAAL,CAAS,MAAT,MAAqB,IAAzB,EAAgC;AAC9B,WAAKT,aAAL,CAAmBU,IAAnB,CAAyB,KAAKD,GAAL,CAAS,MAAT,CAAzB,EAA2C,EAA3C;AACD;AACD,WAAO,gBAAME,aAAN,YAAoBN,IAApB,CAAP;AACD,G;;mBAEKO,U;;;;;;;AACAC,kB,GAAO,KAAKC,IAAL,E;;AAEX;;;qBACiB,KAAKd,aAAL,CAAmBE,KAAnB,CAAyB,EAACa,UAAUF,KAAKE,QAAhB,EAAzB,EAAoDC,MAApD,E;;;AAAbF,kB;;oBACAA,KAAKG,MAAL,GAAc,C;;;;;+CACT,KAAKC,IAAL,CAAU,gBAAV,C;;;;AAGTL,mBAAKV,IAAL,GAAY,CAAZ;AACAU,mBAAKM,OAAL,GAAe,KAAKC,QAAL,CAAcd,EAA7B;;qBACa,KAAKe,oBAAL,CAA0BR,IAA1B,C;;;AAAbA,kB;;AACAA,qBAAO,KAAKS,WAAL,CAAiBT,IAAjB,CAAP;;;qBAEqB,KAAKb,aAAL,CAAmBuB,OAAnB,CAA2BV,IAA3B,C;;;AAAjBW,sB;+CACG,KAAKC,OAAL,CAAa,EAACnB,IAAIkB,QAAL,EAAb,C;;;;;;;;;;;;;;;;;mBAGHE,S;;;;;;;kBACC,KAAKpB,E;;;;;gDACD,KAAKY,IAAL,CAAU,cAAV,C;;;AAELL,kB,GAAO,KAAKC,IAAL,E;;AACXD,mBAAKP,EAAL,GAAU,KAAKA,EAAf;AACAO,mBAAKV,IAAL,GAAY,CAAZ;;qBACa,KAAKkB,oBAAL,CAA0BR,IAA1B,C;;;AAAbA,kB;;AACAA,qBAAO,KAAKS,WAAL,CAAiBT,IAAjB,CAAP;;;qBAEiB,KAAKb,aAAL,CAAmB2B,QAAnB,CAA4Bd,IAA5B,C;;;AAAbe,kB;gDACG,KAAKH,OAAL,CAAa,EAACI,cAAcD,IAAf,EAAb,C",
+    "file": "../../../../src/admin/controller/api/page.js",
+    "sourcesContent": [
+        "'use strict';\n\nimport Post from './post';\n\nexport default class extends Post {\n  modelInstance = this.modelInstance.setRelation('user').where({type: 1});\n\n  getAction(self){\n    if( !this.id ) {\n      let field = ['id', 'title', 'user_id', 'create_time', 'update_time', 'status', 'pathname', 'is_public'];\n      this.modelInstance.order('create_time DESC').field(field);\n    }\n\n    if( this.get('page') !== '-1' ) {\n      this.modelInstance.page( this.get('page'), 20 );\n    }\n    return super.getBaseAction(self);\n  }\n\n  async postAction(){\n    let data = this.post();\n\n    //check pathname\n    let post = await this.modelInstance.where({pathname: data.pathname}).select();\n    if( post.length > 0 ) {\n      return this.fail('PATHNAME_EXIST');\n    }\n\n    data.type = 1;\n    data.user_id = this.userInfo.id;\n    data = await this.getContentAndSummary(data);\n    data = this.getPostTime(data);\n    \n    let insertId = await this.modelInstance.addPost(data);\n    return this.success({id: insertId});\n  }\n\n  async putAction(){\n    if (!this.id) {\n      return this.fail('PARAMS_ERROR');\n    }\n    let data = this.post();\n    data.id = this.id;\n    data.type = 1;\n    data = await this.getContentAndSummary(data);\n    data = this.getPostTime(data);\n\n    let rows = await this.modelInstance.savePost(data);\n    return this.success({affectedRows: rows});\n  }\n\n}\n"
+    ]
+}

@@ -1,0 +1,23 @@
+{
+    "version": 3,
+    "sources": [
+        "../../../src/home/controller/error.js"
+    ],
+    "names": [
+        "displayError",
+        "status",
+        "_400Action",
+        "_403Action",
+        "_404Action",
+        "_500Action",
+        "_503Action",
+        "think",
+        "controller",
+        "base"
+    ],
+    "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AACE;;;;;mBAKMA,Y;2FAAaC,M;;;;;;;;;;;;;;;;;;AAInB;;;;;;mBAIMC,U;;;;;;;qBACS,KAAKF,YAAL,CAAkB,GAAlB,C;;;;;;;;;;;;;;;;;;;AAEf;;;;;;mBAIMG,U;;;;;;;qBACS,KAAKH,YAAL,CAAkB,GAAlB,C;;;;;;;;;;;;;;;;;;;AAEf;;;;;;mBAIMI,U;;;;;;;qBACS,KAAKJ,YAAL,CAAkB,GAAlB,C;;;;;;;;;;;;;;;;;;;AAEf;;;;;;mBAIMK,U;;;;;;;qBACS,KAAKL,YAAL,CAAkB,GAAlB,C;;;;;;;;;;;;;;;;;;;AAEf;;;;;;mBAIMM,U;;;;;;;qBACS,KAAKN,YAAL,CAAkB,GAAlB,C;;;;;;;;;;;;;;;;;;;;;EA3CYO,MAAMC,UAAN,CAAiBC,I",
+    "file": "../../../src/home/controller/error.js",
+    "sourcesContent": [
+        "export default class extends think.controller.base {\n  /**\n   * display error page\n   * @param  {Number} status []\n   * @return {Promise}        []\n   */\n  async displayError(status){\n\n    \n  }\n  /**\n   * Bad Request \n   * @return {Promise} []\n   */\n  async _400Action(){\n    return await this.displayError(400);\n  }\n  /**\n   * Forbidden \n   * @return {Promise} []\n   */\n  async _403Action(){\n    return await this.displayError(403);\n  }\n  /**\n   * Not Found \n   * @return {Promise}      []\n   */\n  async _404Action(){\n    return await this.displayError(404);\n  }\n  /**\n   * Internal Server Error\n   * @return {Promise}      []\n   */\n  async _500Action(){\n    return await this.displayError(500);\n  }\n  /**\n   * Service Unavailable\n   * @return {Promise}      []\n   */\n  async _503Action(){\n    return await this.displayError(503);\n  }\n}"
+    ]
+}

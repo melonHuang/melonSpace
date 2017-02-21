@@ -1,0 +1,42 @@
+{
+    "version": 3,
+    "sources": [
+        "../../../../src/admin/controller/api/file.js"
+    ],
+    "names": [
+        "uploadConfig",
+        "__before",
+        "getUploadConfig",
+        "postAction",
+        "post",
+        "serviceUpload",
+        "name",
+        "file",
+        "fail",
+        "serviceImport",
+        "type",
+        "config",
+        "path",
+        "model",
+        "getOptions",
+        "options",
+        "upload",
+        "service",
+        "uploader",
+        "think",
+        "run",
+        "result",
+        "success",
+        "importor",
+        "page",
+        "category",
+        "tag",
+        "console",
+        "log"
+    ],
+    "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;AAAA;;;;AACA;;;;AACA;;;;;;;;;;;;;;;;;;gJAGEA,Y,GAAe,E;;;mBAETC,Q;;;;;;;qBACsB,KAAKC,eAAL,E;;;AAA1B,mBAAKF,Y;;;;;;;;;;;;;;;;;mBAGDG,U;;;;;;;mBAEA,KAAKC,IAAL,CAAU,SAAV,C;;;;;gDACK,KAAKC,aAAL,CACL,QADK,EAEL,KAAKD,IAAL,CAAU,SAAV,CAFK,EAGL,EAACE,MAAM,KAAKF,IAAL,CAAU,MAAV,CAAP,EAHK,C;;;AAOLG,kB,GAAO,KAAKA,IAAL,CAAU,MAAV,C;;kBACNA,I;;;;;gDAAgB,KAAKC,IAAL,CAAU,mBAAV,C;;;mBAGjB,KAAKJ,IAAL,CAAU,UAAV,C;;;;;gDACK,KAAKK,aAAL,CAAoB,KAAKL,IAAL,CAAU,UAAV,CAApB,EAA2CG,IAA3C,C;;;;AAGT;AACA;;AAEA;AACKG,kB,GAAQ,KAAKV,Y,CAAbU,I;AACDC,oB,GAAS,KAAKX,Y;;kBAEbU,I;;;;;gDAAgB,KAAKF,IAAL,E;;;AACrB,kBAAGE,QAAQ,OAAX,EAAoB;AAClBC,yBAAS,EAACL,MAAM,KAAKF,IAAL,CAAU,MAAV,CAAP,EAAT;AACD;;gDAEM,KAAKC,aAAL,CAAmBK,IAAnB,EAAyBH,KAAKK,IAA9B,EAAoCD,MAApC,C;;;;;;;;;;;;;;;;;AAGT;;;mBACMT,e;;;;;;;;qBACkB,KAAKW,KAAL,CAAW,SAAX,EAAsBC,UAAtB,E;;;AAAhBC,qB;gDACCA,QAAQC,M;;;;;;;;;;;;;;;;;AAGjB;;;;;mBAGMX,a;6FAAcY,O,EAASV,I,EAAMI,M;;;;;;;AAEzBO,sB,GAAWC,MAAMF,OAAN,aAAwBA,OAAxB,EAAmC,OAAnC,C;;qBACK,IAAIC,QAAJ,EAAD,CAAeE,GAAf,CAAmBb,IAAnB,EAAyBI,MAAzB,C;;;AAAfU,oB;gDACC,KAAKC,OAAL,CAAaD,MAAb,C;;;;;gDAEA,KAAKb,IAAL,CAAU,gBAAK,mBAAf,C;;;;;;;;;;;;;;;;;AAIX;;;;;mBAGMC,a;6FAAcQ,O,EAASV,I;;;;;;;;AAErBgB,sB,GAAWJ,MAAMF,OAAN,aAAwBA,OAAxB,EAAmC,OAAnC,C;;qBAC0B,IAAIM,QAAJ,CAAa,IAAb,CAAD,CAAqBH,GAArB,CAAyBb,IAAzB,C;;;;AAAnCH,kB,SAAAA,I;AAAMoB,kB,SAAAA,I;AAAMC,sB,SAAAA,Q;AAAUC,iB,SAAAA,G;gDACpB,KAAKJ,OAAL,qCAAsBlB,IAAtB,kCAAmCoB,IAAnC,kCAAgDC,QAAhD,kCAAiEC,GAAjE,a;;;;;;AAEPC,sBAAQC,GAAR;gDACO,KAAKpB,IAAL,c",
+    "file": "../../../../src/admin/controller/api/file.js",
+    "sourcesContent": [
+        "import fs from 'fs';\nimport path from 'path';\nimport Base from './base';\n\nexport default class extends Base {\n  uploadConfig = {};\n\n  async __before() {\n    this.uploadConfig = await this.getUploadConfig();\n  }\n\n  async postAction() {\n    /** 处理远程抓取 **/\n    if( this.post('fileUrl') ) {\n      return this.serviceUpload(\n        'remote', \n        this.post('fileUrl'), \n        {name: this.post('name')}\n      );\n    }\n\n    let file = this.file('file');\n    if( !file ) { return this.fail('FILE_UPLOAD_ERROR'); }\n\n    /** 处理导入数据 **/\n    if( this.post('importor') ) {\n      return this.serviceImport( this.post('importor'), file );\n    }\n\n    /** 检查文件类型 */\n    // let contentType = file.headers['content-type']; \n\n    // 处理其它上传\n    let {type} = this.uploadConfig;\n    let config = this.uploadConfig;\n    \n    if( !type ) { return this.fail(); }\n    if(type == 'local') {\n      config = {name: this.post('name')};\n    }\n    \n    return this.serviceUpload(type, file.path, config);\n  }\n\n  // 获取上传设置\n  async getUploadConfig() {\n    const options = await this.model('options').getOptions();\n    return options.upload;\n  }\n\n  /**\n   * 上传文件\n   */\n  async serviceUpload(service, file, config) {\n    try {\n      const uploader = think.service(`upload/${service}`, 'admin');\n      const result = await (new uploader).run(file, config);\n      return this.success(result);\n    } catch (e) {\n      return this.fail(e || 'FILE_UPLOAD_ERROR');\n    }\n  }\n\n  /**\n   * 从其他平台导入数据\n   */\n  async serviceImport(service, file) {\n    try {\n      let importor = think.service(`import/${service}`, 'admin');\n      let {post, page, category, tag} = await (new importor(this)).run(file);\n      return this.success(`共导入文章 ${post} 篇，页面 ${page} 页，分类 ${category} 个，标签 ${tag} 个`);\n    } catch(e) {\n      console.log(e);\n      return this.fail(e);\n    }\n  }\n}\n"
+    ]
+}

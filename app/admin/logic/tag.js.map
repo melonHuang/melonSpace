@@ -1,0 +1,20 @@
+{
+    "version": 3,
+    "sources": [
+        "../../../src/admin/logic/tag.js"
+    ],
+    "names": [
+        "postAction",
+        "rules",
+        "name",
+        "pathname",
+        "think",
+        "logic",
+        "base"
+    ],
+    "mappings": ";;;;;;;;;;;;;;;;;;;;;;;;;;mBACEA,U,yBAAa;AACX,SAAKC,KAAL,GAAa;AACXC,YAAM,UADK;AAEXC,gBAAU;AAFC,KAAb;AAID,G;;;EAN0BC,MAAMC,KAAN,CAAYC,I",
+    "file": "../../../src/admin/logic/tag.js",
+    "sourcesContent": [
+        "export default class extends think.logic.base {\n  postAction() {\n    this.rules = {\n      name: 'required',\n      pathname: 'required'\n    };\n  }\n}"
+    ]
+}

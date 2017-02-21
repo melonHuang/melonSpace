@@ -1,0 +1,14 @@
+{
+    "version": 3,
+    "sources": [
+        "../../../src/admin/config/hook.js"
+    ],
+    "names": [
+        "resource"
+    ],
+    "mappings": ";;;kBAAe;AACbA,YAAU,CAAC,aAAD,EAAgB,aAAhB;AADG,C",
+    "file": "../../../src/admin/config/hook.js",
+    "sourcesContent": [
+        "export default {\n  resource: ['webpack-dev', 'webpack-hot']\n}"
+    ]
+}

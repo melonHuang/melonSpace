@@ -1,0 +1,21 @@
+{
+    "version": 3,
+    "sources": [
+        "../../../src/common/config/db.js"
+    ],
+    "names": [
+        "type",
+        "host",
+        "port",
+        "database",
+        "user",
+        "password",
+        "prefix",
+        "encoding"
+    ],
+    "mappings": ";;;AAAA;;;;;kBAKe;AACfA,QAAM,OADS;AAEfC,QAAM,WAFS;AAGfC,QAAM,MAHS;AAIfC,YAAU,gBAJK;AAKfC,QAAM,MALS;AAMfC,YAAU,MANK;AAOfC,UAAQ,KAPO;AAQfC,YAAU;AARK,C",
+    "file": "../../../src/common/config/db.js",
+    "sourcesContent": [
+        "/**\n* db config\n* generate by installer\n* Sat Jan 09 2016 22:38:01 GMT+0800 (CST)\n*/\nexport default {\ntype: 'mysql',\nhost: '127.0.0.1',\nport: '3306',\ndatabase: 'firekylin_test',\nuser: 'root',\npassword: 'root',\nprefix: 'fk_',\nencoding: 'utf8mb4'\n}\n"
+    ]
+}
